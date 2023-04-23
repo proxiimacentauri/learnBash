@@ -159,36 +159,36 @@
     - For the second loop, "words" are separated by a `newline`, which means bash considers the whole value of "items" as a single word.
     - If **IFS is more than one character**, splitting will be done on any of those characters.
         ```bash
-            #!/bin/bash
-            names=(
-                "Aaron Maxwell"
-                "Wayne Gretzky"
-                "David Beckham"
-            )
+        #!/bin/bash
+        names=(
+            "Aaron Maxwell"
+            "Wayne Gretzky"
+            "David Beckham"
+        )
 
-            echo "With default IFS value..."
-            for name in ${names[@]}; do
-                echo "$name"
-            done
+        echo "With default IFS value..."
+        for name in ${names[@]}; do
+            echo "$name"
+        done
 
-            With default IFS value...
-            Aaron
-            Maxwell
-            Wayne
-            Gretzky
-            David
-            Beckham
+        With default IFS value...
+        Aaron
+        Maxwell
+        Wayne
+        Gretzky
+        David
+        Beckham
 
-            echo "With strict-mode IFS value..."
-            IFS=$'\n\t'
-            for name in ${names[@]}; do
-                echo "$name"
-            done
+        echo "With strict-mode IFS value..."
+        IFS=$'\n\t'
+        for name in ${names[@]}; do
+            echo "$name"
+        done
 
-            With strict-mode IFS value...
-            Aaron Maxwell
-            Wayne Gretzky
-            David Beckham
+        With strict-mode IFS value...
+        Aaron Maxwell
+        Wayne Gretzky
+        David Beckham
         ```
     - Setting IFS to `$'\n\t'` means that word splitting will happen only:
         - Newlines
@@ -233,7 +233,7 @@
 </br>
 
 - ### TL;DR
-  ```bash
+    ```bash
     #!/bin/bash
     IFS=$'\n\t'
     set -eEuo pipefail
@@ -249,7 +249,7 @@
     }
 
     trap EXIT_IF_CMD_FAIL_WITH_TRACE ERR
-  ```
+    ```
 
 
 </br>
@@ -270,18 +270,18 @@
 
 - ### `Custom Prompt`
     ```bash
-        NS="ACU_P8"
-        PS1_NS="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
-        sudo ip netns exec ${NS} /bin/bash --rcfile <(echo "PS1=${PS1_NS}")
+    NS="ACU_P8"
+    PS1_NS="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
+    sudo ip netns exec ${NS} /bin/bash --rcfile <(echo "PS1=${PS1_NS}")
 
-        ^^^^ Work in Progress
+    ^^^^ Work in Progress
 
-        NS="ACU_P8"
-        sudo ip netns exec ${NS} /bin/bash
-        NS="ACU_P8"
-        PS1="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
+    NS="ACU_P8"
+    sudo ip netns exec ${NS} /bin/bash
+    NS="ACU_P8"
+    PS1="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
 
-        ^^^ Works
+    ^^^ Works
     ```
 
 - ### References
