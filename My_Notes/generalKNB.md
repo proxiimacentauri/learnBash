@@ -9,35 +9,36 @@
 | [BASH Debug Ability](#BDA)      |
 | [BASH Static Analysis Tool](#BSAT)      |
 | [BASH Strict Mode](#BSM)      |
-| [Linux Network Namespaces](#LNN)      |
-| [Linux Terminal Cheatsheet](#LTC)      |
+| [BASH Terminal Redirection Commands](#BTRC)      |
+| [BASH Arrays](#BA)      |
+| [BASH Conditional Evaluators `[]` `[[]]`](#BCE)      |
+| [BASH Stdout Formatting](#BStdF)      |
+| [BASH Variable Expansion and Manipulation](#BVEAM)      |
+| [BASH Multiline Comments](#BMC)      |
+| [BASH Misc Tools and Tricks](#BMTT)      |
+| [BASH Globbing](#BG)      |
+| [BASH Kill Background Processess](#BKBP)      |
+| [BASH Coloured Output](#BCO)      |
+| [BASH Stream Editor Shortcuts (sed)](#BSES)      |
+| [BASH Regular Expression Shortcuts](#BREGEX)      |
+| [BASH Python Path for Packages](#BPPFP)      |
+| [Ubuntu Network Namespaces](#UNN)      |
+| [Ubuntu Terminal Cheatsheet](#UTC)      |
+| [Ubuntu Package Check and Install](#UPCI)      |
+| [Ubuntu Force a USB 3.0 port to work in USB 2.0 mode](#UUSB)      |
+| [Ubuntu `Systemd` service](#UDSL)      |
+| [Ubuntu Cron Jobs](#UCJ)      |
+| [Ubuntu CPU Stats](#UCPUS)      |
+| [Ubuntu Set Permanent Naming Scheme for Serial Devices](#USPNSSD)      |
+| [Ubuntu Real Time Disk Usage (ncdu)](#URTDU)      |
 | [VIM Cheatsheet](#VC)      |
 | [TMUX Cheatsheet](#TC)      |
-| [Terminal Redirection Commands](#TRC)      |
-| [Real Time Disk Usage (ncdu)](#RTDU)      |
-| [Stream Editor Shortcuts (sed)](#SES)      |
-| [BASH Arrays](#BA)      |
-| [Package Check and Install](#PCI)      |
 | [MacOS Open Multiples of the Same Application](#MOMSA)      |
 | [MacOS Reset Trial Period of Applications](#MRTPA)      |
 | [Windows Sub-System for Linux (WSL)](#WSL)      |
-| [BASH Conditional Evaluators `[]` `[[]]`](#BCE)      |
 | [git (Global Information Tracker)](#GIT)      |
-| [Stdout Formatting](#StdF)      |
+| [git (Work and Personal Profiles)](#GWPP)      |
 | [VS Code Shortcuts](#VSS)      |
-| [Force a USB 3.0 port to work in USB 2.0 mode in Linux](#FUSB)      |
-| [`Systemd` service in Linux](#SDSL)      |
-| [BASH Multiline Comments](#BMC)      |
-| [Regular Expression Shortcuts](#Regex)      |
-| [Python Path for Packages](#PPFP)      |
-| [Creating Two Git Profiles on a Laptop](#CTGPOL)      |
-| [Cron Jobs](#CJ)      |
-| [CPU Stats on Linux](#CPUSL)      |
-| [Misc Tools and Tricks](#MTT)      |
-| [BASH Globbing](#BG)      |
-| [Kill Background Processess](#KBP)      |
-| [BASH Coloured Output](#BCO)      |
-| [Set Permanent Naming Scheme for Serial Devices](#SPNSSD)      |
 | [](#)      |
 | [](#)      |
 
@@ -304,9 +305,7 @@
     ```
 
 
-</br>
-</br>
-
+</br></br>
 
 - ### References
     > http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -315,142 +314,458 @@
 
     > https://github.com/tests-always-included/wick/blob/master/doc/bash-strict-mode.md
 
-<br>
-<br>
+</br></br>
 
+<h2 id="BTRC"></h2>
 
-<h2 id="LNN"></h2>
-
-## Linux Network Namespaces
+## BASH Terminal Redirection Commands
 [Back to Top](#top)
-- ### `Custom Prompt`
-    ```bash
-    NS="ACU_P8"
-    PS1_NS="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
-    sudo ip netns exec ${NS} /bin/bash --rcfile <(echo "PS1=${PS1_NS}")
 
-    ^^^^ Work in Progress
+|          | Terminal|          | File             |  | existing |
+| Syntax   | StdOut  |  StdErr  |  StdOut  |  StdErr  |   file    |
+| :---     |
+|     `>`    |   no     |   yes    |   yes    |    no    | overwrite  |
+|    `>>`    |   no     |   yes    |   yes    |    no    |  append    |
+|   `2>`     |   yes    |    no    |    no    |   yes    | overwrite  |
+|   `2>>`    |   yes    |    no    |    no    |   yes    |  append    |
+|          |          |          |          |          |            |
+|   `&>`     |    no    |    no    |   yes    |   yes    | overwrite  |
+|   `&>>`    |    no    |    no    |   yes    |   yes    |  append    |
+|          |          |          |          |          |            |
+|   `tee`    |   yes    |   yes    |   yes    |    no    | overwrite  |
+|   `tee -a` |   yes    |   yes    |   yes    |    no    |  append    |
+|          |          |          |          |          |            |
+| `& tee`    |   yes    |   yes    |   yes    |   yes    | overwrite  |
+| `& tee -a` |   yes    |   yes    |   yes    |   yes    |  append    |
 
-    NS="ACU_P8"
-    sudo ip netns exec ${NS} /bin/bash
-    NS="ACU_P8"
-    PS1="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
+</br>
 
-    ^^^ Works
-    ```
+- `cmd > output.txt`
+    - StdOut ----> file
+    - NOT visible in the terminal
+    - If file exists ----> overwritten.
+
+</br>
+
+- `cmd >> output.txt`
+    - StdOut ----> file
+    - NOT visible in the terminal
+    - If file exists ----> append
+
+</br>
+
+- `cmd 2> output.txt`
+    - StdOut ----> file
+    - NOT be visible in the terminal
+    - If file exists ----> overwritten.
+
+</br>
+
+- `cmd 2>> output.txt`
+    - StdErr ----> file
+    - NOT be visible in the terminal
+    - If file exists ----> append
+
+</br>
+
+- `cmd &> output.txt`
+    - *StdOut and StdErr* ----> file
+    - NOT be visible in the terminal
+    - If file exists ----> overwritten.
+
+</br>
+
+- `cmd &>> output.txt`
+    - *StdOut and StdErr* ----> file
+    - NOT be visible in the terminal.
+    - If file exists ----> append
+
+</br>
+
+- `cmd | tee output.txt`
+    - StdOut `copied` to the file
+    - Visible in the terminal
+    - If file exists ----> overwritten.
+
+</br>
+
+- `cmd | tee -a output.txt`
+    - StdOut `copied` to the file
+    - Visible in the terminal
+    - If file exists ----> append
+
+</br>
+
+- `cmd |& tee output.txt`
+    - *StdOut and StdErr* `copied` to the file
+    - Visible in the terminal
+    - If file exists ----> overwritten.
+
+</br>
+
+- `cmd |& tee -a output.txt`
+    - *StdOut and StdErr* `copied` to the file
+    - Visible in the terminal.
+    - If file exists ----> append
+
+</br>
+
 
 - ### References
-    > https://gist.github.com/dpino/6c0dca1742093346461e11aa8f608a99
+    > stackoverflow.com
 
 </br></br></br></br>
 
-<h2 id="LTC"></h2>
 
-## Linux Terminal Cheatsheet
+<h2 id="BA"></h2>
+
+## BASH Arrays
 [Back to Top](#top)
-### Shell
-- A (possibly interactive) command interpreter, acting as a layer between the user and the system.
-Bash: The Bourne Again Shell, a Bourne compatible shell.
+- Associative/ Dictionary Arrray (`Unordered`)
+    - Bash doesnt provide an ordered associative Array
+    - `-A` - Associative Array
+    - `-g` - Global Array
+    ```bash
+    declare -gA num_words=( [1]="one" [2]="two" [3]="three" )
 
-- Traditionally, a shell prompt either ends with `$ %  #`
-    - `$` = Indicates a shell that's compatible with the Bourne shell (such as a POSIX shell, or a Korn shell, or Bash)
-    - `%` = Indicates a C shell (csh or tcsh)
-    - `#` = Indicates that the shell is running as the system's superuser account (root)
+    for num in "${!num_words[@]}"
+    do
+        echo "$num --- ${num_words[$num]}"
+    done
+    ```
 
-- **Manual Pages**
-    - `man man`     = contains the manual of all the commands (ex: man ssh)
-    - `man apropos` = search the manual page names and descriptions
+- Associative/ Dictionary Arrray (`Ordered`)
+    ```bash
+    Num_words=("1=one" "2=two" "3=three")
 
-### Shell Shortcuts
-```
-    !$      = copies the last arg of the previous command
-    !!      = copies the whole line before it
-    !!:p    = It will print out the output of !!
-    !foo    = It will run the command which starts with foo
-    !*      = Run the previous command except the first word
+    for num in "${Num_words[@]}"
+    do
+        letter="${num%=*}"
+        word="${num#*=}"
+        echo "Key: $letter, Value: $word"
+    done
+    ```
+- Regular 1D Array
+    ```bash
+    words=("one" "two" "three")
 
-    $?      = tells you the exit status of the previous command
-    $@      = stores all the arguments in a list of string     {$1, $2, $3 ...}
-    $*      = stores all the arguments as a single string      $1 $2 $3 ...
-    $#      = stores the number of arguments
-    $-      = stores the current option flags set builtin command, or those set by the shell itself
-    $$      = stores the process ID of the shell.
-            In a () subshell, it stores process ID of the invoking shell, not the subshell
-    $!      = stores the process  ID of the job most recently placed into the background,
-            whether executed as an asynchronous command or using the bg builtin
-    $0      = stores the name of the shell or shell script
-    $_      = stores the most recent parameter (or the abs path of the command to start the current shell immediately after startup).
+    for w in "${words[@]}"
+    do
+        echo "Word: $w"
+    done
+    ```
 
-    C-a     = Move cursor to beginning of line
-    C-e     = Move cursor to end of line
-    C-l     = Clear-screen
-    C-r     = Reverse Search History
-    C-p     = Walk back in History
-    C-n     = Walk Forward in history
-    C-k     = Kill-line forward of cursor
-    C-u     = Kill-line forward of cursor
-    C-xx    = Move between start of the command line and the current position
-    C-z     = Suspend/stop the command (puts the current in background)
 
-    Opt-R Arrow  = Move cursor forward 1 word
-    Opt-L Arrow  = Move cursor backwards 1 word
+- ### References
+    > Self
 
-    disown -a && exit = Disown the terminal and keep process going
+</br></br></br></br>
 
-    date +"%d%b_%H_%M_%S" = Timestamp
+<h2 id="BCE"></h2>
 
-    # means match from the beginning.
-    % means from the end.
+## BASH Conditional Evaluators `[]` `[[]]`
+[Back to Top](#top)
+- `[` is a bash Builtin
+- `[[` is a bash Keyword
+    - It evaluates the expression and indicate the result of the evaluation by its exit status
 
-    One instance means shortest ( # or %)
-    two instances means longest ( ## or %%)
+- Main difference is that special parsing rules apply to them
+- Ex:
+    ```bash
+    $ [ a < b ]
+    -bash: b: No such file or directory
+    $ [[ a < b ]]
+    ```
+- The below table represents the differences:
 
-    ${my_var#pattern}     # delete shortest match of pattern from the beginning
-    ${my_var##pattern}    # delete longest match of pattern from the beginning
-    ${my_var%pattern}     # delete shortest match of pattern from the end
-    ${my_var%%pattern}    # delete longest match of pattern from the end
+| Feature       | `[[ ]]`     |  `[]`      | Example                                               |
+| :---     |
+| string        | >           | \>         | `[[ a > b ]] ||` echo "a does not come after b"       |
+| comparison    | <           | \<         | `[[ az < za ]] &&` echo "az comes before za"          |
+|               | = or ==     | =          | `[[ a = a ]] &&` echo "a equals a"                    |
+|               | !=          | !=         | `[[ a != b ]] &&` echo "a is not equal to b"          |
+|               | -gt         | -gt        | `[[ 5 -gt 10 ]] ||` echo "5 is not bigger than 10"    |
+| | | | |
+| integer       | -lt         | -lt        | `[[ 8 -lt 9 ]] &&` echo "8 is less than 9"                                                                            |
+| comparison    | -ge         | -ge        | `[[ 3 -ge 3 ]] &&` echo "3 is greater than or equal to 3"                                                             |
+|               | -le         | -le        | `[[ 3 -le 8 ]] &&` echo "3 is less than or equal to 8"                                                                |
+|               | -eq         | -eq        | `[[ 5 -eq 05 ]] &&` echo "5 equals 05"                                                                                |
+|               | -ne         | -ne        | `[[ 6 -ne 20 ]] &&` echo "6 is not equal to 20"                                                                       |
+| | | | |
+| conditional   | &&          | -a         | `[[ -n $var && -f $var ]] &&` echo "$var is a file"                                                                   |
+| evaluation    | `||`    | -o         | `[[ -b $var pipepipe -c $var ]] &&` echo "$var is a device"                                                           |
+| | | | |
+| expression grouping   | (...)       | \(...\)    | `[[ $var = img* && ($var = *.png pipepipe $var = *.jpg) ]] &&` echo "$var starts with img and ends with .jpg or .png" |
+| | | | |
+| Pattern matching      | = or ==     | N/A        | `[[ $name = a* ]] ||` echo "name does not start with an 'a': $name"                                             |
+| | | | |
+| RegularExpression matching     | =~          | N/A        | `[[ $(date) =~ ^Fri\ ...\ 13 ]] &&` echo "It's Friday the 13th!"                                                      |
+| | | | |
+| entry (file or directory) exists    | -e          | N/A        | `[[ -e $config ]] &&` echo "config file exists: $config"                                                              |
+| file is newer/older than other file | -nt / -ot   | N/A        | `[[ $file0 -nt $file1 ]] &&` echo "$file0 is newer than $file1"                                                       |
+| two files are the same              | -ef         | N/A        | `[[ $input -ef $output ]] &&` { echo "will not overwrite input file: $input"; exit 1; }                               |
+| negation                            | !           | N/A        | `[[ ! -u $file ]] &&` echo "$file is not a setuid file"                                                               |
 
+- `-a` and `-o` operators, and `( ... )` grouping, are defined by POSIX but only for strictly limited case and are marked as deprecated.
+- Use of these operators is discouraged; you should use multiple `[` commands instead.
+
+
+- ### References
+    > http://mywiki.wooledge.org/BashFAQ/031
+
+
+
+</br></br></br></br>
+
+<h2 id="BStdF"></h2>
+
+## BASH Stdout Formatting
+[Back to Top](#top)
+- In order to print multiple new lines:
+    ```bash
+    $ num_lines=10
+    $ printf "\n %.0s" $(seq 1 $num_lines)
+    ```
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+<h2 id="BVEAM"></h2>
+
+## BASH Variable Expansion and Manipulation
+[Back to Top](#top)
+
+- BASH offers a way to parse the value of a variable in the below way:
+- `#` = match from the beginning.
+- `%` = match from the end.
+    - One instance means **shortest** `#` or `%`
+    - Two instances means **longest** `##` or `%%`
+    ```bash
+    ${my_var#pattern}    # delete shortest match of pattern from the beginning
+    ${my_var##pattern}   # delete longest match of pattern from the beginning
+    ${my_var%pattern}    # delete shortest match of pattern from the end
+    ${my_var%%pattern}   # delete longest match of pattern from the end
+
+    # Example
+    $ my_var="users/akshay/domain.example"
+    $ echo ${MYVAR##*/}
+    domain.example
+
+    $ echo ${MYVAR%/*}
+    users/akshay
+
+    $ echo ${MYVAR##*.}
+    example
+
+    $ NAME=${MYVAR##*/}  # remove part before last slash
+    $ echo ${NAME%.*}    # from the new var remove the part after the last period
+    domain
+    ```
+- BASH also offers string manipulation:
+    ```bash
     ${my_var:3}           # Remove the first three chars (leaving 4..end)
     ${my_var:4:}          # Return the characters except the first 4
     ${my_var::3}          # Return the first three characters
     ${my_var::-3}         # Return the characters except the last 3
     ${my_var:3:5}         # The next five characters after removing the first 3 (chars 4-9)
-
-    ${my_var^^}           = Changes the case of the value in my_var to UPPER Case
-    ${my_var,,}           = Changes the case of the value in my_var to LOWER Case
+    ```
+- BASH also offers a way to change the case.
+    ```bash
+    ${my_var^^}           # Changes the case of the value in my_var to UPPER Case
+    ${my_var,,}           # Changes the case of the value in my_var to LOWER Case
 
     ${my_var/search/replace}
+    ```
+- BASH also allows setting the value of the variables through below conditions:
+    ```bash
+    ${my_var:-bash}      # expands to the value of my_var if it is set and not null, and to default otherwise
+    ${my_var:=bash}      # expands to the value of my_var if it is set and not null, and to default otherwise.
+                            # It also sets the value of my_var to default if it is unset or null.
+    ${my_var:+word}      # expands to word if my_var is set and not null, and to an empty string otherwise
+    ${my_var:?error}     # expands to the value of my_var if it is set and not null, and causes an error and prints error otherwise.
+    ${#my_var}           # expands to the length of my_var
+    ```
+- ### References
+    > https://stackoverflow.com/questions/19482123/extract-part-of-a-string-using-bash-cut-split/19482947
 
-    Example:
+    > https://www.baeldung.com/linux/string-contains-substring
 
-        my_var="users/akshay/domain.example"
-
-        $ echo ${MYVAR##*/}
-        domain.example
-
-        $ echo ${MYVAR%/*}
-        users/akshay
-
-        $ echo ${MYVAR##*.}
-        example
-
-        $ NAME=${MYVAR##*/}      # remove part before last slash
-        $ echo ${NAME%.*}        # from the new var remove the part after the last period
-        domain
+</br></br></br></br>
 
 
-    ${my_var:-bash}          - expands to the value of my_var if it is set and not null, and to default otherwise
-    ${my_var:=bash}          - expands to the value of my_var if it is set and not null, and to default otherwise.
-                            It also sets the value of my_var to default if it is unset or null.
-    ${my_var:+word}          - expands to word if my_var is set and not null, and to an empty string otherwise
-    ${my_var:?error}         - expands to the value of my_var if it is set and not null, and causes an error and prints error otherwise.
-    ${#my_var}               - expands to the length of my_var
-```
-- **Redirect Stream to `/dev/null/`**
-    - To do this:
+
+<h2 id="BMC"></h2>
+
+## BASH Multiline Comments
+[Back to Top](#top)
+- There are 2 ways of doing this:
+    - Use a bash in built command `:`
+        - Def - `: [arguments]` No effect; the command does nothing beyond expanding arguments
+        and performing any specified redirections. A zero exit code is
+        returned.
         ```bash
-        $ popd &> /dev/null 2>&1
+        #!/bin/bash
+        echo "I want this to be printed before."
+        : '
+        echo "This should not be printed."
+        echo "This should not be printed."
+        echo "This should not be printed."
+        '
+        echo "I want this to be printed after."
         ```
+    - Use `<<`
+        ```bash
+        #!/bin/bash
+        echo "I want this to be printed before."
+        <<akshay
+        echo "This should not be printed."
+        echo "This should not be printed."
+        echo "This should not be printed."
+        akshay
+        echo "I want this to be printed after."
+        ```
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+<h2 id="BMTT"></h2>
+
+## BASH Misc Tools and Tricks
+[Back to Top](#top)
+- Shell Shortcuts
+    ```bash
+    !$      # copies the last arg of the previous command
+    !!      # copies the whole line before it
+    !!:p    # It will print out the output of !!
+    !foo    # It will run the command which starts with foo
+    !*      # Run the previous command except the first word
+
+    $?      # tells you the exit status of the previous command
+    $@      # stores all the arguments in a list of string     {$1, $2, $3 ...}
+    $*      # stores all the arguments as a single string      $1 $2 $3 ...
+    $#      # stores the number of arguments
+    $-      # stores the current option flags set builtin command, or those set by the shell itself
+    $$      # stores the process ID of the shell.
+            # In a () subshell, it stores process ID of the invoking shell, not the subshell
+    $!      # stores the process  ID of the job most recently placed into the background,
+            # whether executed as an asynchronous command or using the bg builtin
+    $0      # stores the name of the shell or shell script
+    $_      # stores the most recent parameter (or the abs path of the command to start the current shell immediately after startup).
+    ```
+- Gives you CPU Stats (Like a Task Manager in Windows)
+    ```bash
+    $ htop
+    ```
+- File Explorer and Estimates the size of all folder dirs.
+    ```bash
+    $ ncdu
+    ```
+- File Explorer
+    ```bash
+    $ mc
+    ```
+- Empty the contents of the file.txt
+    ```bash
+    $ truncate -s 0 file.txt
+    ```
+- History will be timestamped (add it to bashrc)
+    ```bash
+    $ HISTTIMEFORMAT="%Y-%B-%d %T      "
+    ```
+- Format data in a table
+    ```bash
+    $ mount | column -t
+    ```
+- Find a function in an environment:
+    ```bash
+    $ declare -F
+    $ typeset -F
+    $ set | grep " ()"
+    $ compgen -A function
+    ```
+- Digital Loggers Programmable Power Strip: `https://dlidirect.com/products/new-pro-switch`
+- Calculated the Disk usage of all folders in current dir.
+    ```bash
+    $ du -sch .[!.]* * | sort -h
+    ```
+- Speed Test on Command Line
+    ```bash
+    $ curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -
+    ```
+- Shows a list of open files by a process
+    ```bash
+    # `+L1'' will select open files that have been unlinked.
+    $ sudo lsof +L1
+    ```
+
+- If you want a numbered output for cat
+    ```bash
+    $ cat -n filename
+    ```
+
+- Scrollable numbered line text
+    ```bash
+    $ less -N filepath
+    ```
+- Shows full path of the filename
+    ```bash
+    $ which -a filename
+    ```
+- Shows the source of the binary
+    ```bash
+    $ whereis binaryname
+    ```
+- Edit `sudoers` using visudo will validate the syntax:
+    ```bash
+    $ export EDITOR=vim
+    $ visudo
+    ```
+
+- Timestamps for commands:
+    ```bash
+    $ ls -la | ts [%b" "%d,%Y-%l":"%M:%.S]"   "
+    ```
+- To make sure that the script is only `sourced` and not Executed
+    ```bash
+    #!/bin/bash
+    [[ "${BASH_SOURCE[0]}" == "${0}" ]] && { echo -e "\n\n\n\n The scriptName.sh script must be sourced, not executed.\n\n\n\n"; exit 1; }
+
+    ```
+- Delete a folder x no. of days OLD.
+    ```bash
+    $ find /home/akshayd -name "FolderName" -type d -mtime +2 -exec rm -rdf {} \;
+    ```
+- Create a new user in linux with home dir and get full `sudo` permissions.
+    ```bash
+    $ Uname="akshaydandgaval"
+    $ sudo useradd -m -s /bin/bash $Uname
+    $ sudo passwd $Uname
+    $ sudo usermod -aG sudo $Uname
+    $ sudo usermod --shell /bin/bash $Uname
+    $ sudo visudo
+
+    # Add the below to sudoers file
+    username ALL=(ALL) NOPASSWD:ALL
+    ```
+- Detach from a terminal.
+    ```bash
+    $ disown -a && exit = Disown the terminal and keep process going
+    ```
+- Obtain a timestamp and store it in a variable.
+    ```bash
+    $ ts=$(date +"%d%b_%H_%M_%S")
+    ```
+
+
+- **Redirect Stream to `/dev/null/`**
+
+    ```bash
+    $ popd &> /dev/null 2>&1
+    ```
 - **Pipestatus**
     - bash
         ```bash
@@ -514,15 +829,671 @@ Bash: The Bourne Again Shell, a Bourne compatible shell.
 
 
 - ### References
-    > https://gist.github.com/dpino/6c0dca1742093346461e11aa8f608a99
+    > Self
 
-    > https://stackoverflow.com/questions/19482123/extract-part-of-a-string-using-bash-cut-split/19482947
+</br></br></br></br>
 
-    > https://www.baeldung.com/linux/string-contains-substring
+<h2 id="BG"></h2>
+
+## BASH Globbing
+[Back to Top](#top)
+- `?`  - Match single character. It can be used for multiple times for matching multiple characters.
+- `*`  - Match zero or more characters.
+- `[]` - match the character from the range
+- `^`  - **Outside []** to search contents of the file that starts with a given range of characters.
+- `^`  - **Inside []** to show all content of the file by highlighting the lines start with a given range of characters
+- `!`  - It works same as the use of ‘^’ symbol outside the range pattern
+- `$`  - To define the ending characters
+- `{}` - Can be used to match filenames with more than one globbing patterns.
+- `|`  - Its also used for applying more than one condition on globbing pattern.
+
+    ```bash
+    $ ls -l best.???
+
+
+    $ ls -l a*.*
+
+
+    $ echo "Do you want to confirm?"
+    $ read answer
+    $ case $answer in
+    $ [Yy]* )  echo "confirmed.";;
+    $ [Nn]* )  echo "Not confirmed.";;
+    $ *) echo "Try again.";;
+    $ esac
+
+    # [:upper:] or [A-Z]
+    # [:lower:] or [a-z]
+    # [:digit:] or [0-9]
+
+    $ ls -l [p-s]*
+    $ ls -l [1-5]*
+
+    # list.txt
+    #     Apple
+    #     4000
+    #     Banana
+    #     700
+    #     Orange
+    #     850
+    #     Pear
+    #     9000
+    #     Jackdruit
+
+    $ grep '^[P-R]' list.txt       ## Search Lines that starts with ‘P’ or Q or R
+    Pear
+
+    $ grep '[^P-R]' list.txt       ## Highlight lines that starts with ‘P’ or Q or R
+    Apple
+    4000
+    Banana
+    700
+    Orange
+    850
+    Pear
+    9000
+    Jackdruit
+
+    $ grep [!P-R] list.txt          ## Show Lines that starts with ‘P’ or Q or R
+    Pear
+
+    $ grep a$ list.txt
+    Banana
+
+    $ grep 50$ list.txt
+    850
+
+    $ ls -l {?????.sh,*st.txt}
+    $ rm {*.doc,*.docx}
+
+    $ ls a*+(.bash | .sh)
+
+    $ echo "Select any option from the menu:"
+    $ read answer
+    $ case $answer in
+    $ 1 | S )  echo "Searching text";;
+    $ 2 | R )  echo "Replacing text";;
+    $ 3 | D )  echo "Deleting text";;
+    $ *) echo "Try again.";;
+    $ esac
+    ```
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+<h2 id="BKBP"></h2>
+
+## BASH Kill Background Processes
+[Back to Top](#top)
+
+- If there is a process in the bacground like the below and there are multiple instances of it:
+    ```bash
+    $ while true
+    do
+        sleep 60s
+        echo 3
+        break
+    done &
+    [1] 4796
+    [2] 4799
+    ```
+
+- There are 2 ways to kill it:
+    - We can get it into `foreground` by typing ==> `fg`
+        - once you type fg on the terminal
+        - It will get the code in the bacground on the terminal and you can press Ctrl+C
+        ```bash
+        $ fg
+        # Press Ctrl + C
+        ```
+
+    - Use the cmd `jobs` and using the number inside the [] issue cmd ===> `kill %1`
+        ```bash
+        $ jobs
+        [1]-  Running                 while true; do
+            sleep 60s; echo 1; break;
+        done &
+        [2]+  Running                 while true; do
+            sleep 60s; echo 3; break;
+        done &
+        $ kill %1
+        $ kill %2
+        ```
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+<h2 id="BCO"></h2>
+
+## BASH Coloured Output
+[Back to Top](#top)
+- Below is a way to display various colours available in BASH:
+    ```bash
+    RESET="\033[0m"
+    for (( j=0; j<=200; j++ ))
+    do
+        CLR="\033[1;38;5;${j}m"
+        printf "\n \n ${CLR} ============================================================= ${RESET}"
+        printf "\n ${CLR} ================ [ Colour Number: $j ] ===================== ${RESET}"
+        printf "\n ${CLR} ============================================================= ${RESET} \n"
+    done
+    ```
+
+- ### References
+    > Self
 
 </br></br></br></br>
 
 
+<h2 id="BSES"></h2>
+
+## BASH Stream Editor Shortcuts (sed)
+[Back to Top](#top)
+- You can concatenate multiple edits together:
+    ```bash
+    sed -i 's/\"//g;s/\,/\n/g;s/\s//g' input_file
+
+    x="$(cat timestamp.txt  | sed 's#'\n'# #g')"
+    echo $x
+    timestamp_array=(${x//$'\n'/ })
+    echo ${timestamp_array[10]}
+    for i in ${timestamp_array[@]}
+    do
+        echo $i
+    done
+    ```
+
+- List of valid delimiters for sed:
+    ```bash
+    $ sed 's/a/b/g' <<< "haha"
+    hbhb
+
+    $ sed 's_a_b_g' <<< "haha"
+    hbhb
+
+    $ sed 's#a#b#g' <<< "haha"
+    hbhb
+
+    $ sed 's$a$b$g' <<< "haha"
+    hbhb
+
+    $ sed 's?a?b?g' <<< "haha"
+    hbhb
+
+    $ sed 's*a*b*g' <<< "haha"
+    hbhb
+
+    $ sed 's-a-b-g' <<< "haha"
+    hbhb
+
+    $ sed 's.a.b.g' <<< "haha"
+    hbhb
+
+    $ sed 'sXaXbXg' <<< "haha"
+    hbhb
+
+    $ sed 'sxaxbxg' <<< "haha"
+    hbhb
+
+    $ sed 's1a1b1g' <<< "haha"
+    hbhb
+    ```
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+
+<h2 id="BREGEX"></h2>
+
+## BASH Regular Expression Shortcuts
+[Back to Top](#top)
+- `[[ "$var" =~ ^[0-9]+$ ]]` - To check if the variable is a digit
+- `[[ "$var" =~ ^[[:digit:]]{5}$ ]]` - To check if the variable is a 5 digit
+
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+
+<h2 id="BPPFP"></h2>
+
+## BASH Python Path for Packages
+[Back to Top](#top)
+
+- Sometimes python is NOT able to find its packages:
+    ```bash
+    $ export PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages
+    $ echo $PYTHONPATH
+    $ python -c "import sys; print(sys.path)"
+    $ python -c "from scapy.all import *;Ether() / bytearray(10)"
+    ```
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
+
+
+<h2 id="UNN"></h2>
+
+## Ubuntu Network Namespaces
+[Back to Top](#top)
+- ### `Custom Prompt`
+    ```bash
+    NS="ACU_P8"
+    PS1_NS="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
+    sudo ip netns exec ${NS} /bin/bash --rcfile <(echo "PS1=${PS1_NS}")
+
+    ^^^^ Work in Progress
+
+    NS="ACU_P8"
+    sudo ip netns exec ${NS} /bin/bash
+    NS="ACU_P8"
+    PS1="\033[3;38;5;197m${NS}\033[3;38;5;15m@\033[3;38;5;179m$(hostname)\033[3;38;5;15m:$ \033[0m"
+
+    ^^^ Works
+    ```
+
+- ### References
+    > https://gist.github.com/dpino/6c0dca1742093346461e11aa8f608a99
+
+</br></br></br></br>
+
+<h2 id="UTC"></h2>
+
+## Ubuntu Terminal Cheatsheet
+[Back to Top](#top)
+### Shell
+- A (possibly interactive) command interpreter, acting as a layer between the user and the system.
+Bash: The Bourne Again Shell, a Bourne compatible shell.
+
+- Traditionally, a shell prompt either ends with `$ %  #`
+    - `$` = Indicates a shell that's compatible with the Bourne shell (such as a POSIX shell, or a Korn shell, or Bash)
+    - `%` = Indicates a C shell (csh or tcsh)
+    - `#` = Indicates that the shell is running as the system's superuser account (root)
+
+- **Manual Pages**
+    - `man man`     = contains the manual of all the commands (ex: man ssh)
+    - `man apropos` = search the manual page names and descriptions
+
+### Shell Shortcuts
+```bash
+    C-a     # Move cursor to beginning of line
+    C-e     # Move cursor to end of line
+    C-l     # Clear-screen
+    C-r     # Reverse Search History
+    C-p     # Walk back in History
+    C-n     # Walk Forward in history
+    C-k     # Kill-line forward of cursor
+    C-u     # Kill-line forward of cursor
+    C-xx    # Move between start of the command line and the current position
+    C-z     # Suspend/stop the command (puts the current in background)
+
+    Opt-R Arrow  # Move cursor forward 1 word
+    Opt-L Arrow  # Move cursor backwards 1 word
+```
+
+- ### References
+    > https://gist.github.com/dpino/6c0dca1742093346461e11aa8f608a99
+
+</br></br></br></br>
+
+
+<h2 id="UPCI"></h2>
+
+## Ubuntu Package Check and Install
+[Back to Top](#top)
+- There is also a way to search for a particular package:
+    ```bash
+    $ apt search nvidia-graphics-driver
+    ```
+- Below is a helper function designed by me which will check for the requirements and install them if they are NOT installed.
+    ```bash
+    #!/bin/bash
+    _installreq()
+    {
+        update_pkg_mgr()
+        {
+            echo -e "\n\n ${YELLOW}Updating apt-get package manager.${NC}\n\n"
+            sudo apt update && sudo apt upgrade -y
+        }
+
+        apt_get_install()
+        {
+            sudo apt-get install -y $1 #&> /dev/null 2>&1
+        }
+
+        install_pyreq()
+        {
+            if [[ -f ./requirements.txt ]]
+            then
+                pip3 install -r requirements.txt
+            else
+                echo -e "${BLUE} The 'requirements.txt' is missing in the current directory.${NC} \n"
+            fi
+        }
+
+        run_installer()
+        {
+            ## $1 - App to check
+            ## $2 - Installer Program to Run <apt_get | dpkg>
+
+            echo -e "${BLUE} $1 --> [NOT Installed].${NC} \n"
+            echo -e "${YELLOW} Installing $1 using $2...${NC} \n"
+            case $2 in
+                apt_get|dpkg)
+                    apt_get_install "$1"
+                    ;;
+                *)
+                    echo -e "${RED} $1 [Installation NOT Supported] ${NC} \n"
+                    ;;
+            esac
+            if [[ "$?" == "0" ]]
+            then
+                echo -e "\n ${GREEN} $1 [Installed] ${NC} \n"
+            else
+                echo -e "${BLUE} $1 --> [Failed Installation].${NC} \n"
+            fi
+        }
+
+        check_program()
+        {
+            ## $1 - App to check
+            ## $2 - Installer Program to Run <apt_get | dpkg>
+
+            if [[ "$2" =~ ^(apt_get)$ ]]
+            then
+                if command -v "$1" &> /dev/null 2>&1
+                then
+                    echo -e "\n ${GREEN} $1 [Installed] ${NC} \n"
+                else
+                    run_installer "$1" "$2"
+                fi
+
+            elif [[ "$2" =~ ^(dpkg)$ ]]
+            then
+                if dpkg -s "$1" &> /dev/null 2>&1
+                then
+                    echo -e "\n ${GREEN} dpkg Module $1 [Installed] ${NC} \n"
+                else
+                    run_installer "$1" "$2"
+                fi
+            fi
+        }
+
+        local RED='\033[0;31m'
+        local BLUE='\033[1;34m'
+        local GREEN='\033[0;32m'
+        local YELLOW='\033[1;33m'
+        local NC='\033[0m'
+
+        update_pkg_mgr
+
+        install_apps=("python3=dpkg" "python3-pip=dpkg" "scapy=apt_get" "sshpass=apt_get" "net-tools=apt_get" "moreutils=dpkg")
+
+        for element in "${install_apps[@]}"
+        do
+            app="${element%=*}"
+            mgr="${element#*=}"
+            #echo "Key: $app, Value: $mgr"
+
+            check_program "$app" "$mgr"
+        done
+
+        install_pyreq
+    }
+    ```
+
+- ### References
+    > Self
+
+</br></br></br></br>
+
+<h2 id="UUSB"></h2>
+
+## Ubuntu Force a USB 3.0 port to work in USB 2.0 mode
+[Back to Top](#top)
+- The controllers have a register XUSB2PR – xHC USB 2.0 Port Routing Register – at address 0xd0
+- When the XUSB2PR register is set to 0, it routes all the corresponding USB 2.0 port pins to the EHCI controller and RMH #1
+- The USB 2.0 port is masked from the xHC and the USB 2.0 port’s OC pin is routed to the EHCI controller. (Below Command does it)
+    ```bash
+    $ setpci -H1 -d @ d0.l=0
+    ```
+- setpci needs the vendor and device ID. So the first 2 lines find all USB controller’s IDs and pass them to xargs to invoke setpci.
+    ```bash
+    $ lspci -nn | grep USB
+
+        00:14.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB xHCI Host Controller [8086:8d31] (rev 05)
+        00:1a.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #2 [8086:8d2d] (rev 05)
+        00:1d.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #1 [8086:8d26] (rev 05)
+
+    $ lspci -nn | grep USB | cut -d '[' -f3 | cut -d ']' -f1
+
+        8086:8d31
+        8086:8d2d
+        8086:8d26
+    $ sudo setpci -H1 -d 8086:8d31 d0.l=0
+    $ sudo setpci -H1 -d 8086:8d2d d0.l=0
+    $ sudo setpci -H1 -d 8086:8d26 d0.l=0
+
+    # One line-shot
+    $ lspci -nn | grep USB | cut -d '[' -f3 | cut -d ']' -f1 | xargs -t -I@ setpci -   H1 -d @ d0.l=0
+    ```
+- ### References
+    > https://www.systutorials.com/how-to-force-a-usb-3-0-port-to-work-in-usb-2-0-mode-in-linux/
+
+</br></br></br></br>
+
+<h2 id="UDSL"></h2>
+
+## Ubuntu `Systemd` service
+[Back to Top](#top)
+- Create a file named `serviceName.service` and include the following
+- Syntax:
+    ```
+    [Unit]
+    Description=<description about this service>
+
+    [Service]
+    User=<user e.g. root>
+    WorkingDirectory=<directory_of_script e.g. /root>
+    ExecStart=<script which needs to be executed>
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+- Example:
+    ```
+    [Unit]
+    Description=key server for product and dev key generation
+    After=network.target
+
+    [Service]
+    Type=simple
+    WorkingDirectory=/home/akshayd/test/.key_server
+    ExecStart=/home/akshayd/test/key_server &
+    TimeoutStartSec=0
+
+    [Install]
+    WantedBy=default.target
+    ```
+- To Enable the new service:
+    ```bash
+    # Reload the service files to include the new service.
+    $ sudo systemctl daemon-reload
+
+    # Start your service
+    $ sudo systemctl start serviceName.service
+
+    # check the status of your service
+    $ sudo systemctl status serviceName.service
+
+    # enable your service on every reboot
+    $ sudo systemctl enable serviceName.service
+
+    # disable your service on every reboot
+    $ sudo systemctl disable serviceName.service
+    ```
+- Any script that you add this the below folder location will be executed at the time of reboot `/etc/init.d`
+
+
+- ### References
+    > google.com
+
+</br></br></br></br>
+
+
+<h2 id="UCJ"></h2>
+
+## Ubuntu Cron Jobs
+[Back to Top](#top)
+
+- Execute the command to open the file where we can add:
+    ```bash
+    # Choose the editor to open in if doing for the first time
+    $ sudo crontab -e
+    ```
+- If you want some script to start on a periodic manner add it:
+    ```bash
+    # NOT every version of cron supports @reboot
+    @reboot sh /home/Ak/setup_something.sh
+    @yearly sh /home/Ak/setup_something.sh
+    @monthly sh /home/Ak/setup_something.sh
+    @weekly sh /home/Ak/setup_something.sh
+    @daily sh /home/Ak/setup_something.sh
+    @midnight sh /home/Ak/setup_something.sh
+    @hourly sh /home/Ak/setup_something.sh
+    ```
+- If you want more granularity:
+    ```bash
+    # <minute> <hour> <day-of-month> <month> <day-of-week> <command>
+    * * * * * sh /home/Ak/setup_something.sh
+
+    # Run at 12 noon everyday
+    0 12 * * ? sh /home/Ak/setup_something.sh
+    ```
+
+- ### References
+    > google.com
+
+</br></br></br></br>
+
+
+<h2 id="UCPUS"></h2>
+
+## Ubuntu CPU Stats
+[Back to Top](#top)
+- Cores = Cores per socket X Sockets
+    ```bash
+    $ echo "Cores = $(( $(lscpu | awk '/^Socket\(s\)/{ print $2 }') * $(lscpu | awk '/^Core\(s\) per socket/{ print $4 }') ))"
+    ```
+
+- CPUs are what you see when you run `htop`:
+    ```bash
+    $ lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
+    ```
+
+- The output of `nproc` corresponds to the CPU count from `lscpu`:
+    ```bash
+    $ nproc --all
+    ```
+
+- The cpu cores reported by `/proc/cpuinfo` corresponds to the **Core(s) per socket** reported by lscpu.
+    ```bash
+    $ grep -m 1 'cpu cores' /proc/cpuinfo
+    ```
+
+- Another useful utility is `dmidecode` which outputs per socket information:
+    ```bash
+    $ sudo dmidecode -t 4 | grep -E 'Socket Designation|Count'
+    ```
+
+- The `lscpu` command has a number of useful options that you may like to check out:
+    ```bash
+    lscpu --all --extended
+    lscpu --all --parse=CPU,SOCKET,CORE | grep -v '^#'
+    lshw | grep cpu:
+    ```
+
+- ### References
+    > https://unix.stackexchange.com/questions/218074/how-to-know-number-of-cores-of-a-system-in-linux
+
+</br></br></br></br>
+
+<h2 id="USPNSSD"></h2>
+
+## Ubuntu Set Permanent Naming Scheme for Serial Devices
+[Back to Top](#top)
+
+- When we connect a serial cables from a device:
+    ```bash
+    $ ls /dev/ttyUSB
+    ttyUSB0    ttyUSB1    ttyUSB2
+    ```
+
+- When we wish to Log/Open the serial port to view the logs we will need to specify the port.
+    ```bash
+    $ sudo minicom -w -c on -D /dev/ttyUSB1
+    ```
+
+- The above can be stored in a file as a database. But when the hostmachine to which these cables are connected Reboots.
+
+- The assignment of the ttyUSBx is random and cant be controlled.
+
+- In order to solve this problem we need to bind the serial number of the cable to an alias: `ttyUSB1 ---> ttyUSBDev1`
+
+
+- Find out the `ID_SERIAL_SHORT` of the UART cable connected to the host machine.
+    ```bash
+    # Replace the `x` with a number
+    $ sudo udevadm info --query=property --name=/dev/ttyUSBx | grep -i "ID_SERIAL_SHORT"
+    ID_SERIAL_SHORT=CIDYb116L16
+    ```
+- In case the `ID_SERIAL_SHORT=""` (empty) that means that the UART cable doesnt have a serial number.
+- Please order a different UART cable which will have a serial number.
+
+    https://www.amazon.com/gp/product/B07RFNHTL9/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&th=1
+
+
+- Add the serial number to the below line:
+    ```bash
+    ACTION=="add",ENV{ID_BUS}=="usb",ENV{ID_SERIAL_SHORT}=="CIDYb116L16",SYMLINK+="ttyUSBp4lx1"
+                                                            ^^^^^^^^^^             ^^^^^^^^^^
+                                                        Add Serial No.      Set an Appro. Name
+    ```
+- Paste this line in the following file:
+    ```bash
+    $ vim /etc/udev/rules.d/99-usbserial.rules
+    ```
+
+- ### References
+    > Self
+
+</br></br></br></br>
+
+<h2 id="URTDU"></h2>
+
+## Ubuntu Real Time Disk Usage (ncdu)
+[Back to Top](#top)
+
+- Installation
+    - Linux - `sudo apt install ncdu`
+    - MacOS - `brew install ncdu`
+
+</br>
+
+- ### References
+    > stackoverflow.com
+
+</br></br></br></br>
 
 
 <h2 id="VC"></h2>
@@ -661,339 +1632,6 @@ Bash: The Bourne Again Shell, a Bourne compatible shell.
 </br></br></br></br>
 
 
-<h2 id="TRC"></h2>
-
-## Terminal Redirection Commands
-[Back to Top](#top)
-
-|          | Terminal|          | File             |  | existing |
-| Syntax   | StdOut  |  StdErr  |  StdOut  |  StdErr  |   file    |
-| :---     |
-|     `>`    |   no     |   yes    |   yes    |    no    | overwrite  |
-|    `>>`    |   no     |   yes    |   yes    |    no    |  append    |
-|   `2>`     |   yes    |    no    |    no    |   yes    | overwrite  |
-|   `2>>`    |   yes    |    no    |    no    |   yes    |  append    |
-|          |          |          |          |          |            |
-|   `&>`     |    no    |    no    |   yes    |   yes    | overwrite  |
-|   `&>>`    |    no    |    no    |   yes    |   yes    |  append    |
-|          |          |          |          |          |            |
-|   `tee`    |   yes    |   yes    |   yes    |    no    | overwrite  |
-|   `tee -a` |   yes    |   yes    |   yes    |    no    |  append    |
-|          |          |          |          |          |            |
-| `& tee`    |   yes    |   yes    |   yes    |   yes    | overwrite  |
-| `& tee -a` |   yes    |   yes    |   yes    |   yes    |  append    |
-
-</br>
-
-- `cmd > output.txt`
-    - StdOut ----> file
-    - NOT visible in the terminal
-    - If file exists ----> overwritten.
-
-</br>
-
-- `cmd >> output.txt`
-    - StdOut ----> file
-    - NOT visible in the terminal
-    - If file exists ----> append
-
-</br>
-
-- `cmd 2> output.txt`
-    - StdOut ----> file
-    - NOT be visible in the terminal
-    - If file exists ----> overwritten.
-
-</br>
-
-- `cmd 2>> output.txt`
-    - StdErr ----> file
-    - NOT be visible in the terminal
-    - If file exists ----> append
-
-</br>
-
-- `cmd &> output.txt`
-    - *StdOut and StdErr* ----> file
-    - NOT be visible in the terminal
-    - If file exists ----> overwritten.
-
-</br>
-
-- `cmd &>> output.txt`
-    - *StdOut and StdErr* ----> file
-    - NOT be visible in the terminal.
-    - If file exists ----> append
-
-</br>
-
-- `cmd | tee output.txt`
-    - StdOut `copied` to the file
-    - Visible in the terminal
-    - If file exists ----> overwritten.
-
-</br>
-
-- `cmd | tee -a output.txt`
-    - StdOut `copied` to the file
-    - Visible in the terminal
-    - If file exists ----> append
-
-</br>
-
-- `cmd |& tee output.txt`
-    - *StdOut and StdErr* `copied` to the file
-    - Visible in the terminal
-    - If file exists ----> overwritten.
-
-</br>
-
-- `cmd |& tee -a output.txt`
-    - *StdOut and StdErr* `copied` to the file
-    - Visible in the terminal.
-    - If file exists ----> append
-
-</br>
-
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-
-<h2 id="RTDU"></h2>
-
-## Real Time Disk Usage (ncdu)
-[Back to Top](#top)
-
-- Installation
-    - Linux - `sudo apt install ncdu`
-    - MacOS - `brew install ncdu`
-
-</br>
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-<h2 id="SES"></h2>
-
-## Stream Editor Shortcuts (sed)
-[Back to Top](#top)
-- You can concatenate multiple edits together:
-    ```bash
-    sed -i 's/\"//g;s/\,/\n/g;s/\s//g' input_file
-
-    x="$(cat timestamp.txt  | sed 's#'\n'# #g')"
-    echo $x
-    timestamp_array=(${x//$'\n'/ })
-    echo ${timestamp_array[10]}
-    for i in ${timestamp_array[@]}
-    do
-        echo $i
-    done
-    ```
-
-- List of valid delimiters for sed:
-    ```bash
-    $ sed 's/a/b/g' <<< "haha"
-    hbhb
-
-    $ sed 's_a_b_g' <<< "haha"
-    hbhb
-
-    $ sed 's#a#b#g' <<< "haha"
-    hbhb
-
-    $ sed 's$a$b$g' <<< "haha"
-    hbhb
-
-    $ sed 's?a?b?g' <<< "haha"
-    hbhb
-
-    $ sed 's*a*b*g' <<< "haha"
-    hbhb
-
-    $ sed 's-a-b-g' <<< "haha"
-    hbhb
-
-    $ sed 's.a.b.g' <<< "haha"
-    hbhb
-
-    $ sed 'sXaXbXg' <<< "haha"
-    hbhb
-
-    $ sed 'sxaxbxg' <<< "haha"
-    hbhb
-
-    $ sed 's1a1b1g' <<< "haha"
-    hbhb
-    ```
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-
-
-<h2 id="BA"></h2>
-
-## BASH Arrays
-[Back to Top](#top)
-- Associative/ Dictionary Arrray (`Unordered`)
-    - Bash doesnt provide an ordered associative Array
-    - `-A` - Associative Array
-    - `-g` - Global Array
-    ```bash
-    declare -gA num_words=( [1]="one" [2]="two" [3]="three" )
-
-    for num in "${!num_words[@]}"
-    do
-        echo "$num --- ${num_words[$num]}"
-    done
-    ```
-
-- Associative/ Dictionary Arrray (`Ordered`)
-    ```bash
-    Num_words=("1=one" "2=two" "3=three")
-
-    for num in "${Num_words[@]}"
-    do
-        letter="${num%=*}"
-        word="${num#*=}"
-        echo "Key: $letter, Value: $word"
-    done
-    ```
-- Regular 1D Array
-    ```bash
-    words=("one" "two" "three")
-
-    for w in "${words[@]}"
-    do
-        echo "Word: $w"
-    done
-    ```
-
-
-- ### References
-    > Self
-
-</br></br></br></br>
-
-
-<h2 id="PCI"></h2>
-
-## Package Check and Install
-[Back to Top](#top)
-- There is also a way to search for a particular package:
-    ```bash
-    $ apt search nvidia-graphics-driver
-    ```
-- Below is a helper function designed by me which will check for the requirements and install them if they are NOT installed.
-    ```bash
-    #!/bin/bash
-    _installreq()
-    {
-        update_pkg_mgr()
-        {
-            echo -e "\n\n ${YELLOW}Updating apt-get package manager.${NC}\n\n"
-            sudo apt update && sudo apt upgrade -y
-        }
-
-        apt_get_install()
-        {
-            sudo apt-get install -y $1 #&> /dev/null 2>&1
-        }
-
-        install_pyreq()
-        {
-            if [[ -f ./requirements.txt ]]
-            then
-                pip3 install -r requirements.txt
-            else
-                echo -e "${BLUE} The 'requirements.txt' is missing in the current directory.${NC} \n"
-            fi
-        }
-
-        run_installer()
-        {
-            ## $1 - App to check
-            ## $2 - Installer Program to Run <apt_get | dpkg>
-
-            echo -e "${BLUE} $1 --> [NOT Installed].${NC} \n"
-            echo -e "${YELLOW} Installing $1 using $2...${NC} \n"
-            case $2 in
-                apt_get|dpkg)
-                    apt_get_install "$1"
-                    ;;
-                *)
-                    echo -e "${RED} $1 [Installation NOT Supported] ${NC} \n"
-                    ;;
-            esac
-            if [[ "$?" == "0" ]]
-            then
-                echo -e "\n ${GREEN} $1 [Installed] ${NC} \n"
-            else
-                echo -e "${BLUE} $1 --> [Failed Installation].${NC} \n"
-            fi
-        }
-
-        check_program()
-        {
-            ## $1 - App to check
-            ## $2 - Installer Program to Run <apt_get | dpkg>
-
-            if [[ "$2" =~ ^(apt_get)$ ]]
-            then
-                if command -v "$1" &> /dev/null 2>&1
-                then
-                    echo -e "\n ${GREEN} $1 [Installed] ${NC} \n"
-                else
-                    run_installer "$1" "$2"
-                fi
-
-            elif [[ "$2" =~ ^(dpkg)$ ]]
-            then
-                if dpkg -s "$1" &> /dev/null 2>&1
-                then
-                    echo -e "\n ${GREEN} dpkg Module $1 [Installed] ${NC} \n"
-                else
-                    run_installer "$1" "$2"
-                fi
-            fi
-        }
-
-        local RED='\033[0;31m'
-        local BLUE='\033[1;34m'
-        local GREEN='\033[0;32m'
-        local YELLOW='\033[1;33m'
-        local NC='\033[0m'
-
-        update_pkg_mgr
-
-        install_apps=("python3=dpkg" "python3-pip=dpkg" "scapy=apt_get" "sshpass=apt_get" "net-tools=apt_get" "moreutils=dpkg")
-
-        for element in "${install_apps[@]}"
-        do
-            app="${element%=*}"
-            mgr="${element#*=}"
-            #echo "Key: $app, Value: $mgr"
-
-            check_program "$app" "$mgr"
-        done
-
-        install_pyreq
-    }
-    ```
-
-- ### References
-    > Self
-
-</br></br></br></br>
-
-
 <h2 id="MOMSA"></h2>
 
 ## MacOS Open Multiples of the Same Application
@@ -1106,61 +1744,7 @@ Bash: The Bourne Again Shell, a Bourne compatible shell.
 
 </br></br></br></br>
 
-<h2 id="BCE"></h2>
 
-## BASH Conditional Evaluators `[]` `[[]]`
-[Back to Top](#top)
-- `[` is a bash Builtin
-- `[[` is a bash Keyword
-    - It evaluates the expression and indicate the result of the evaluation by its exit status
-
-- Main difference is that special parsing rules apply to them
-- Ex:
-    ```bash
-    $ [ a < b ]
-    -bash: b: No such file or directory
-    $ [[ a < b ]]
-    ```
-- The below table represents the differences:
-
-| Feature       | `[[ ]]`     |  `[]`      | Example                                               |
-| :---     |
-| string        | >           | \>         | `[[ a > b ]] ||` echo "a does not come after b"       |
-| comparison    | <           | \<         | `[[ az < za ]] &&` echo "az comes before za"          |
-|               | = or ==     | =          | `[[ a = a ]] &&` echo "a equals a"                    |
-|               | !=          | !=         | `[[ a != b ]] &&` echo "a is not equal to b"          |
-|               | -gt         | -gt        | `[[ 5 -gt 10 ]] ||` echo "5 is not bigger than 10"    |
-| | | | |
-| integer       | -lt         | -lt        | `[[ 8 -lt 9 ]] &&` echo "8 is less than 9"                                                                            |
-| comparison    | -ge         | -ge        | `[[ 3 -ge 3 ]] &&` echo "3 is greater than or equal to 3"                                                             |
-|               | -le         | -le        | `[[ 3 -le 8 ]] &&` echo "3 is less than or equal to 8"                                                                |
-|               | -eq         | -eq        | `[[ 5 -eq 05 ]] &&` echo "5 equals 05"                                                                                |
-|               | -ne         | -ne        | `[[ 6 -ne 20 ]] &&` echo "6 is not equal to 20"                                                                       |
-| | | | |
-| conditional   | &&          | -a         | `[[ -n $var && -f $var ]] &&` echo "$var is a file"                                                                   |
-| evaluation    | `||`    | -o         | `[[ -b $var pipepipe -c $var ]] &&` echo "$var is a device"                                                           |
-| | | | |
-| expression grouping   | (...)       | \(...\)    | `[[ $var = img* && ($var = *.png pipepipe $var = *.jpg) ]] &&` echo "$var starts with img and ends with .jpg or .png" |
-| | | | |
-| Pattern matching      | = or ==     | N/A        | `[[ $name = a* ]] ||` echo "name does not start with an 'a': $name"                                             |
-| | | | |
-| RegularExpression matching     | =~          | N/A        | `[[ $(date) =~ ^Fri\ ...\ 13 ]] &&` echo "It's Friday the 13th!"                                                      |
-| | | | |
-| entry (file or directory) exists    | -e          | N/A        | `[[ -e $config ]] &&` echo "config file exists: $config"                                                              |
-| file is newer/older than other file | -nt / -ot   | N/A        | `[[ $file0 -nt $file1 ]] &&` echo "$file0 is newer than $file1"                                                       |
-| two files are the same              | -ef         | N/A        | `[[ $input -ef $output ]] &&` { echo "will not overwrite input file: $input"; exit 1; }                               |
-| negation                            | !           | N/A        | `[[ ! -u $file ]] &&` echo "$file is not a setuid file"                                                               |
-
-- `-a` and `-o` operators, and `( ... )` grouping, are defined by POSIX but only for strictly limited case and are marked as deprecated.
-- Use of these operators is discouraged; you should use multiple `[` commands instead.
-
-
-- ### References
-    > http://mywiki.wooledge.org/BashFAQ/031
-
-
-
-</br></br></br></br>
 
 <h2 id="GIT"></h2>
 
@@ -1173,199 +1757,9 @@ Bash: The Bourne Again Shell, a Bourne compatible shell.
 
 </br></br></br></br>
 
-<h2 id="StdF"></h2>
+<h2 id="GWPP"></h2>
 
-## Stdout Formatting
-[Back to Top](#top)
-- In order to print multiple new lines:
-    ```bash
-    $ num_lines=10
-    $ printf "\n %.0s" $(seq 1 $num_lines)
-    ```
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-<h2 id="VSS"></h2>
-
-## VS Code Shortcuts
-[Back to Top](#top)
-- Line Wrap - `Option + Z`
-- To Add/Remove a code book mark: `Cmd + Shift + <1 - 9>`
-- To Go to that bookmark: `Command + <1 - 9>`
-- ### References
-    > microsoft.com
-
-</br></br></br></br>
-
-<h2 id="FUSB"></h2>
-
-## Force a USB 3.0 port to work in USB 2.0 mode in Linux
-[Back to Top](#top)
-- The controllers have a register XUSB2PR – xHC USB 2.0 Port Routing Register – at address 0xd0
-- When the XUSB2PR register is set to 0, it routes all the corresponding USB 2.0 port pins to the EHCI controller and RMH #1
-- The USB 2.0 port is masked from the xHC and the USB 2.0 port’s OC pin is routed to the EHCI controller. (Below Command does it)
-    ```bash
-    $ setpci -H1 -d @ d0.l=0
-    ```
-- setpci needs the vendor and device ID. So the first 2 lines find all USB controller’s IDs and pass them to xargs to invoke setpci.
-    ```bash
-    $ lspci -nn | grep USB
-
-        00:14.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB xHCI Host Controller [8086:8d31] (rev 05)
-        00:1a.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #2 [8086:8d2d] (rev 05)
-        00:1d.0 USB controller [0c03]: Intel Corporation C610/X99 series chipset USB Enhanced Host Controller #1 [8086:8d26] (rev 05)
-
-    $ lspci -nn | grep USB | cut -d '[' -f3 | cut -d ']' -f1
-
-        8086:8d31
-        8086:8d2d
-        8086:8d26
-    $ sudo setpci -H1 -d 8086:8d31 d0.l=0
-    $ sudo setpci -H1 -d 8086:8d2d d0.l=0
-    $ sudo setpci -H1 -d 8086:8d26 d0.l=0
-
-    # One line-shot
-    $ lspci -nn | grep USB | cut -d '[' -f3 | cut -d ']' -f1 | xargs -t -I@ setpci -   H1 -d @ d0.l=0
-    ```
-- ### References
-    > https://www.systutorials.com/how-to-force-a-usb-3-0-port-to-work-in-usb-2-0-mode-in-linux/
-
-</br></br></br></br>
-
-<h2 id="SDSL"></h2>
-
-## `Systemd` service in Linux
-[Back to Top](#top)
-- Create a file named `serviceName.service` and include the following
-- Syntax:
-    ```
-    [Unit]
-    Description=<description about this service>
-
-    [Service]
-    User=<user e.g. root>
-    WorkingDirectory=<directory_of_script e.g. /root>
-    ExecStart=<script which needs to be executed>
-    Restart=always
-
-    [Install]
-    WantedBy=multi-user.target
-    ```
-- Example:
-    ```
-    [Unit]
-    Description=key server for product and dev key generation
-    After=network.target
-
-    [Service]
-    Type=simple
-    WorkingDirectory=/home/akshayd/test/.key_server
-    ExecStart=/home/akshayd/test/key_server &
-    TimeoutStartSec=0
-
-    [Install]
-    WantedBy=default.target
-    ```
-- To Enable the new service:
-    ```bash
-    # Reload the service files to include the new service.
-    $ sudo systemctl daemon-reload
-
-    # Start your service
-    $ sudo systemctl start serviceName.service
-
-    # check the status of your service
-    $ sudo systemctl status serviceName.service
-
-    # enable your service on every reboot
-    $ sudo systemctl enable serviceName.service
-
-    # disable your service on every reboot
-    $ sudo systemctl disable serviceName.service
-    ```
-- Any script that you add this the below folder location will be executed at the time of reboot `/etc/init.d`
-
-
-- ### References
-    > google.com
-
-</br></br></br></br>
-
-<h2 id="BMC"></h2>
-
-## BASH Multiline Comments
-[Back to Top](#top)
-- There are 2 ways of doing this:
-    - Use a bash in built command `:`
-        - Def - `: [arguments]` No effect; the command does nothing beyond expanding arguments
-        and performing any specified redirections. A zero exit code is
-        returned.
-        ```bash
-        #!/bin/bash
-        echo "I want this to be printed before."
-        : '
-        echo "This should not be printed."
-        echo "This should not be printed."
-        echo "This should not be printed."
-        '
-        echo "I want this to be printed after."
-        ```
-    - Use `<<`
-        ```bash
-        #!/bin/bash
-        echo "I want this to be printed before."
-        <<akshay
-        echo "This should not be printed."
-        echo "This should not be printed."
-        echo "This should not be printed."
-        akshay
-        echo "I want this to be printed after."
-        ```
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-<h2 id="REGEX"></h2>
-
-## Regular Expression Shortcuts
-[Back to Top](#top)
-- `[[ "$var" =~ ^[0-9]+$ ]]` - To check if the variable is a digit
-- `[[ "$var" =~ ^[[:digit:]]{5}$ ]]` - To check if the variable is a 5 digit
-
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-
-<h2 id="PPFP"></h2>
-
-## Python Path for Packages
-[Back to Top](#top)
-
-- Sometimes python is NOT able to find its packages:
-    ```bash
-    $ export PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages
-    $ echo $PYTHONPATH
-    $ python -c "import sys; print(sys.path)"
-    $ python -c "from scapy.all import *;Ether() / bytearray(10)"
-    ```
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-
-<h2 id="CTGPOL"></h2>
-
-## Creating Two Git Profiles on a Laptop
+## git (Work and Personal Profiles)
 [Back to Top](#top)
 
 - Create a Dir which you want to be your personal directory.
@@ -1433,390 +1827,22 @@ Bash: The Bourne Again Shell, a Bourne compatible shell.
 
 </br></br></br></br>
 
-<h2 id="CJ"></h2>
 
-## Cron Jobs
+
+<h2 id="VSS"></h2>
+
+## VS Code Shortcuts
 [Back to Top](#top)
-
-- Execute the command to open the file where we can add:
-    ```bash
-    # Choose the editor to open in if doing for the first time
-    $ sudo crontab -e
-    ```
-- If you want some script to start on a periodic manner add it:
-    ```bash
-    # NOT every version of cron supports @reboot
-    @reboot sh /home/Ak/setup_something.sh
-    @yearly sh /home/Ak/setup_something.sh
-    @monthly sh /home/Ak/setup_something.sh
-    @weekly sh /home/Ak/setup_something.sh
-    @daily sh /home/Ak/setup_something.sh
-    @midnight sh /home/Ak/setup_something.sh
-    @hourly sh /home/Ak/setup_something.sh
-    ```
-- If you want more granularity:
-    ```bash
-    # <minute> <hour> <day-of-month> <month> <day-of-week> <command>
-    * * * * * sh /home/Ak/setup_something.sh
-
-    # Run at 12 noon everyday
-    0 12 * * ? sh /home/Ak/setup_something.sh
-    ```
-
+- Line Wrap - `Option + Z`
+- To Add/Remove a code book mark: `Cmd + Shift + <1 - 9>`
+- To Go to that bookmark: `Command + <1 - 9>`
 - ### References
-    > google.com
+    > microsoft.com
 
 </br></br></br></br>
 
-<h2 id="CPUSL"></h2>
 
 
-
-## CPU Stats on Linux
-[Back to Top](#top)
-- Cores = Cores per socket X Sockets
-    ```bash
-    $ echo "Cores = $(( $(lscpu | awk '/^Socket\(s\)/{ print $2 }') * $(lscpu | awk '/^Core\(s\) per socket/{ print $4 }') ))"
-    ```
-
-- CPUs are what you see when you run `htop`:
-    ```bash
-    $ lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
-    ```
-
-- The output of `nproc` corresponds to the CPU count from `lscpu`:
-    ```bash
-    $ nproc --all
-    ```
-
-- The cpu cores reported by `/proc/cpuinfo` corresponds to the **Core(s) per socket** reported by lscpu.
-    ```bash
-    $ grep -m 1 'cpu cores' /proc/cpuinfo
-    ```
-
-- Another useful utility is `dmidecode` which outputs per socket information:
-    ```bash
-    $ sudo dmidecode -t 4 | grep -E 'Socket Designation|Count'
-    ```
-
-- The `lscpu` command has a number of useful options that you may like to check out:
-    ```bash
-    lscpu --all --extended
-    lscpu --all --parse=CPU,SOCKET,CORE | grep -v '^#'
-    lshw | grep cpu:
-    ```
-
-- ### References
-    > https://unix.stackexchange.com/questions/218074/how-to-know-number-of-cores-of-a-system-in-linux
-
-</br></br></br></br>
-
-<h2 id="MTT"></h2>
-
-## Misc Tools and Tricks
-[Back to Top](#top)
-- Gives you CPU Stats (Like a Task Manager in Windows)
-    ```bash
-    $ htop
-    ```
-- File Explorer and Estimates the size of all folder dirs.
-    ```bash
-    $ ncdu
-    ```
-- File Explorer
-    ```bash
-    $ mc
-    ```
-- Empty the contents of the file.txt
-    ```bash
-    $ truncate -s 0 file.txt
-    ```
-- History will be timestamped (add it to bashrc)
-    ```bash
-    $ HISTTIMEFORMAT="%Y-%B-%d %T      "
-    ```
-- Format data in a table
-    ```bash
-    $ mount | column -t
-    ```
-- Find a function in an environment:
-    ```bash
-    $ declare -F
-    $ typeset -F
-    $ set | grep " ()"
-    $ compgen -A function
-    ```
-- `https://dlidirect.com/products/new-pro-switch` - Digital Loggers Programmable Power Strip
-- `du -sch .[!.]* * | sort -h` - Calculated the Disk usage of all folders in current dir.
-- Speed Test on Command Line
-    ```bash
-    $ curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -
-    ```
-- Shows a list of open files by a process
-    ```bash
-    # `+L1'' will select open files that have been unlinked.
-    $ sudo lsof +L1
-    ```
-
-- If you want a numbered output for cat
-    ```bash
-    $ cat -n filename
-    ```
-
-- Scrollable numbered line text
-    ```bash
-    $ less -N filepath
-    ```
-- Shows full path of the filename
-    ```bash
-    $ which -a filename
-    ```
-- Shows the source of the binary
-    ```bash
-    $ whereis binaryname
-    ```
-- Edit `sudoers` using visudo will validate the syntax:
-    ```bash
-    $ export EDITOR=vim
-    $ visudo
-    ```
-
-- Timestamps for commands:
-    ```bash
-    $ ls -la | ts [%b" "%d,%Y-%l":"%M:%.S]"   "
-    ```
-- To make sure that the script is only `sourced` and not Executed
-    ```bash
-    #!/bin/bash
-    [[ "${BASH_SOURCE[0]}" == "${0}" ]] && { echo -e "\n\n\n\n The scriptName.sh script must be sourced, not executed.\n\n\n\n"; exit 1; }
-
-    ```
-- Delete a folder x no. of days OLD.
-    ```bash
-    $ find /home/akshayd -name "FolderName" -type d -mtime +2 -exec rm -rdf {} \;
-    ```
-- Create a new user in linux with home dir and get full `sudo` permissions.
-    ```bash
-    $ Uname="akshaydandgaval"
-    $ sudo useradd -m -s /bin/bash $Uname
-    $ sudo passwd $Uname
-    $ sudo usermod -aG sudo $Uname
-    $ sudo usermod --shell /bin/bash $Uname
-    $ sudo visudo
-
-    # Add the below to sudoers file
-    username ALL=(ALL) NOPASSWD:ALL
-    ```
-- ### References
-    > Self
-
-</br></br></br></br>
-
-<h2 id="BG"></h2>
-
-## BASH Globbing
-[Back to Top](#top)
-- `?`  - Match single character. It can be used for multiple times for matching multiple characters.
-- `*`  - Match zero or more characters.
-- `[]` - match the character from the range
-- `^`  - **Outside []** to search contents of the file that starts with a given range of characters.
-- `^`  - **Inside []** to show all content of the file by highlighting the lines start with a given range of characters
-- `!`  - It works same as the use of ‘^’ symbol outside the range pattern
-- `$`  - To define the ending characters
-- `{}` - Can be used to match filenames with more than one globbing patterns.
-- `|`  - Its also used for applying more than one condition on globbing pattern.
-
-    ```bash
-    $ ls -l best.???
-
-
-    $ ls -l a*.*
-
-
-    $ echo "Do you want to confirm?"
-    $ read answer
-    $ case $answer in
-    $ [Yy]* )  echo "confirmed.";;
-    $ [Nn]* )  echo "Not confirmed.";;
-    $ *) echo "Try again.";;
-    $ esac
-
-    # [:upper:] or [A-Z]
-    # [:lower:] or [a-z]
-    # [:digit:] or [0-9]
-
-    $ ls -l [p-s]*
-    $ ls -l [1-5]*
-
-    # list.txt
-    #     Apple
-    #     4000
-    #     Banana
-    #     700
-    #     Orange
-    #     850
-    #     Pear
-    #     9000
-    #     Jackdruit
-
-    $ grep '^[P-R]' list.txt       ## Search Lines that starts with ‘P’ or Q or R
-    Pear
-
-    $ grep '[^P-R]' list.txt       ## Highlight lines that starts with ‘P’ or Q or R
-    Apple
-    4000
-    Banana
-    700
-    Orange
-    850
-    Pear
-    9000
-    Jackdruit
-
-    $ grep [!P-R] list.txt          ## Show Lines that starts with ‘P’ or Q or R
-    Pear
-
-    $ grep a$ list.txt
-    Banana
-
-    $ grep 50$ list.txt
-    850
-
-    $ ls -l {?????.sh,*st.txt}
-    $ rm {*.doc,*.docx}
-
-    $ ls a*+(.bash | .sh)
-
-    $ echo "Select any option from the menu:"
-    $ read answer
-    $ case $answer in
-    $ 1 | S )  echo "Searching text";;
-    $ 2 | R )  echo "Replacing text";;
-    $ 3 | D )  echo "Deleting text";;
-    $ *) echo "Try again.";;
-    $ esac
-    ```
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-<h2 id="KBP"></h2>
-
-## Kill Background Processess
-[Back to Top](#top)
-
-- If there is a process in the bacground like the below and there are multiple instances of it:
-    ```bash
-    $ while true
-    do
-        sleep 60s
-        echo 3
-        break
-    done &
-    [1] 4796
-    [2] 4799
-    ```
-
-- There are 2 ways to kill it:
-    - We can get it into `foreground` by typing ==> `fg`
-        - once you type fg on the terminal
-        - It will get the code in the bacground on the terminal and you can press Ctrl+C
-        ```bash
-        $ fg
-        # Press Ctrl + C
-        ```
-
-    - Use the cmd `jobs` and using the number inside the [] issue cmd ===> `kill %1`
-        ```bash
-        $ jobs
-        [1]-  Running                 while true; do
-            sleep 60s; echo 1; break;
-        done &
-        [2]+  Running                 while true; do
-            sleep 60s; echo 3; break;
-        done &
-        $ kill %1
-        $ kill %2
-        ```
-
-- ### References
-    > stackoverflow.com
-
-</br></br></br></br>
-
-<h2 id="BCO"></h2>
-
-## BASH Coloured Output
-[Back to Top](#top)
-- Below is a way to display various colours available in BASH:
-    ```bash
-    RESET="\033[0m"
-    for (( j=0; j<=200; j++ ))
-    do
-        CLR="\033[1;38;5;${j}m"
-        printf "\n \n ${CLR} ============================================================= ${RESET}"
-        printf "\n ${CLR} ================ [ Colour Number: $j ] ===================== ${RESET}"
-        printf "\n ${CLR} ============================================================= ${RESET} \n"
-    done
-    ```
-
-- ### References
-    > Self
-
-</br></br></br></br>
-
-<h2 id="SPNSSD"></h2>
-
-## Set Permanent Naming Scheme for Serial Devices
-[Back to Top](#top)
-
-- When we connect a serial cables from a device:
-    ```bash
-    $ ls /dev/ttyUSB
-    ttyUSB0    ttyUSB1    ttyUSB2
-    ```
-
-- When we wish to Log/Open the serial port to view the logs we will need to specify the port.
-    ```bash
-    $ sudo minicom -w -c on -D /dev/ttyUSB1
-    ```
-
-- The above can be stored in a file as a database. But when the hostmachine to which these cables are connected Reboots.
-
-- The assignment of the ttyUSBx is random and cant be controlled.
-
-- In order to solve this problem we need to bind the serial number of the cable to an alias: `ttyUSB1 ---> ttyUSBDev1`
-
-
-- Find out the `ID_SERIAL_SHORT` of the UART cable connected to the host machine.
-    ```bash
-    # Replace the `x` with a number
-    $ sudo udevadm info --query=property --name=/dev/ttyUSBx | grep -i "ID_SERIAL_SHORT"
-    ID_SERIAL_SHORT=CIDYb116L16
-    ```
-- In case the `ID_SERIAL_SHORT=""` (empty) that means that the UART cable doesnt have a serial number.
-- Please order a different UART cable which will have a serial number.
-
-    https://www.amazon.com/gp/product/B07RFNHTL9/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&th=1
-
-
-- Add the serial number to the below line:
-    ```bash
-    ACTION=="add",ENV{ID_BUS}=="usb",ENV{ID_SERIAL_SHORT}=="CIDYb116L16",SYMLINK+="ttyUSBp4lx1"
-                                                            ^^^^^^^^^^             ^^^^^^^^^^
-                                                        Add Serial No.      Set an Appro. Name
-    ```
-- Paste this line in the following file:
-    ```bash
-    $ vim /etc/udev/rules.d/99-usbserial.rules
-    ```
-
-- ### References
-    > Self
-
-</br></br></br></br>
 
 <h2 id=""></h2>
 
@@ -1837,3 +1863,5 @@ Bash: The Bourne Again Shell, a Bourne compatible shell.
     > Self
 
 </br></br></br></br>
+
+
