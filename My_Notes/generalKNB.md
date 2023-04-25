@@ -706,6 +706,18 @@
     ```bash
     $ cat -n filename
     ```
+- Refer to command line n, where (n=number in history)
+    ```bash
+    # history
+    #   1255 vim ak.txt
+    #   1256 ls -la
+    #   1257 cat ak.txt
+    #   1258 mv ak.txt ak1.txt
+    #   1259 rm -f ak1.txt
+    # Now if you want to execute the 1257 command
+
+    $ !-3
+    ```
 
 - Scrollable numbered line text
     ```bash
@@ -714,6 +726,10 @@
 - Shows full path of the filename
     ```bash
     $ which -a filename
+    ```
+- Find out the location of installation
+    ```bash
+    $ type -a <cmd>
     ```
 - Shows the source of the binary
     ```bash
